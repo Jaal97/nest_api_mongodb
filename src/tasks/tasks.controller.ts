@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, ConflictException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, ConflictException, NotFoundException, HttpCode} from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from 'src/dto/create-task.dto';
 
@@ -15,8 +15,10 @@ export class TasksController {
 
 
     @Get(':id')
-    findOne(@Param('id') id: string){
-        return this.taskService.findOne(id);
+    async findOne(@Param('id') id: string){
+        const task = await this.taskService.findOne(id);
+        if(!task) throw new NotFoundException('La tarea no fue encontrada')
+        return task;
     }
 
 
@@ -34,12 +36,17 @@ export class TasksController {
     }
 
     @Delete(':id')
-    delete(@Param('id') id: string){
-        return this.taskService.delete(id)
+    @HttpCode(204)
+    async delete(@Param('id') id: string){
+        const task = await this.taskService.delete(id);
+        if(!task) throw new NotFoundException('Tarea no encontrada');
+        return task;
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() body: any){
-        return this.taskService.update(id, body)
+    async update(@Param('id') id: string, @Body() body: any){
+        const task = await this.taskService.update(id, body);
+        if(!task) throw new NotFoundException('Task not found');
+        return task;
     }
 }
