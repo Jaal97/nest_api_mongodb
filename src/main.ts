@@ -8,6 +8,8 @@ async function bootstrap() {
   app.enableCors(); //encender cords
   app.setGlobalPrefix('api') //Establecemos este prefijo para todas las rutas
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3001);
+
+ 
+  await app.listen(process.env.PORT);
 }
 bootstrap();
